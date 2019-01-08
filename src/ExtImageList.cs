@@ -87,8 +87,10 @@ namespace liveitbe.ImageCat
                 Stopwatch sw = Stopwatch.StartNew();
                 Grid imgGrid;
                 ImageLink link;
-                int tRow = Math.Max(filteredLinks.Count / IMAGE_LIST_COL, 1);
+                int tRow = Math.Max((int)Math.Ceiling((float)filteredLinks.Count / IMAGE_LIST_COL), 1);
+                Console.WriteLine(filteredLinks.Count + ", " + tRow);
                 ImageListRowSetup(tRow);
+                xamlListImage.ScrollToTop();
                 xamlGridListImage.Height = tRow * 120;
                 for (int n = 0; n < filteredLinks.Count; ++n)
                 {
@@ -100,6 +102,7 @@ namespace liveitbe.ImageCat
                     int col = n % IMAGE_LIST_COL;
                     Grid.SetColumn(imgGrid, col);
                     Grid.SetRow(imgGrid, row);
+                    Console.WriteLine(link.name + "(" + col + "," + row + ")");
                 }
                 Console.WriteLine("rearrange done: " + sw.ElapsedMilliseconds);
             });

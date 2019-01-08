@@ -35,7 +35,7 @@ namespace liveitbe.ImageCat
                 goto notag;
             name = file.Name.Substring(0, s0);
             string tagSegment = file.Name.Substring(s0 + 1, s1 - s0 - 1).Replace(tagSepInFile, tagSepUI);
-            RefreshTag(tagSegment);
+            RefreshTag(tagSegment, false);
             return;
         notag:
             name = file.Name.Substring(0, s1);
@@ -54,12 +54,14 @@ namespace liveitbe.ImageCat
             return bi;
         }
 
-        public void RefreshTag(string alltags_)
+        public void RefreshTag(string alltags_, bool rename = true)
         {
             alltags = alltags_;
             tags.Clear();
             string[] tagSegment = alltags.Split(tagSep, StringSplitOptions.RemoveEmptyEntries);
             tags.AddRange(tagSegment.Select(s => StringTag.Ref(s)));
+            if (rename)
+                RenameFile(name);
         }
 
         public void AddTag(StringTag st)

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace liveitbe.ImageCat
 {
@@ -14,10 +15,20 @@ namespace liveitbe.ImageCat
     {
         private const int TAG_ROW_HEIGHT = 28;
         static char[] filterSep = new char[] { ';' };
+        bool tagVisible;
 
         private void InitTagEdit()
         {
+            tagVisible = true;
             xamlButtonClearFilter.Click += (s,e) => ClearFilter();
+            xamlToggleTags.Click += ToggleTagsVisibility;
+            xamlGridTags.SizeChanged += (s, e) => { if (tagVisible) SetupTagGrid(previewLink); };
+        }
+
+        private void ToggleTagsVisibility(object sender, RoutedEventArgs e)
+        {
+            tagVisible = !tagVisible;
+            xamlGridTags.Visibility = tagVisible ? Visibility.Visible : Visibility.Hidden;
         }
 
         private void SetupTagGrid(ImageLink link)
@@ -25,11 +36,13 @@ namespace liveitbe.ImageCat
             xamlGridTags.RowDefinitions.Clear();
             xamlGridTags.RowDefinitions.Add(new RowDefinition());
             xamlGridTags.Children.Clear();
+            if (link == null)
+                return;
             double border = 5;
             double x = 0, lx = 0;
             double xm = xamlGridTags.ActualWidth;
             int row = 0;
-            Console.Write("tags:");
+            Console.WriteLine("tags:" + link.tags.Count);
             foreach(StringTag tag in link.tags)
             {
                 Label tagE = TagElement(tag);
@@ -37,15 +50,16 @@ namespace liveitbe.ImageCat
                 tagE.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
                 tagE.Arrange(new Rect(tagE.DesiredSize));
                 x += tagE.ActualWidth + border;
-                if (x > xm)
+                if (lx > 0 && x > xm)
                 {
                     xamlGridTags.RowDefinitions.Add(new RowDefinition());
                     ++row;
-                    x = 0;
+                    x = tagE.ActualWidth + border;
                     lx = 0;
+                    Console.WriteLine();
                 }
                 Grid.SetRow(tagE, row);
-                tagE.Margin = new Thickness(lx, 0, 0, 0);
+                tagE.Margin = new Thickness(lx, 1, 0, 1);
                 Console.Write(tag + "(" + row + "," + lx + ")" + ", ");
                 lx = x;
             }
@@ -57,7 +71,8 @@ namespace liveitbe.ImageCat
             Label ret = new Label() {
                 Content = tag.ToString(),
                 FontSize = 12,
-                Background = Brushes.LightGreen,
+                Foreground = Brushes.DarkGreen,
+                Background = Brushes.PaleGreen,
                 Width = double.NaN,
                 Height = double.NaN,
                 HorizontalAlignment = HorizontalAlignment.Left,
