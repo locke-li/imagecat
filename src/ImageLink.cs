@@ -32,14 +32,14 @@ namespace liveitbe.ImageCat
             int s0 = file.Name.LastIndexOf(tagStartInFile);
             int s1 = file.Name.LastIndexOf(tagEndInFile);
             if (s0 < 0)
-                goto notag;
+            {
+                name = file.Name.Substring(0, s1);
+                return;
+            }
             name = file.Name.Substring(0, s0);
             string tagSegment = file.Name.Substring(s0 + 1, s1 - s0 - 1).Replace(tagSepInFile, tagSepUI);
             RefreshTag(tagSegment, false);
             return;
-        notag:
-            name = file.Name.Substring(0, s1);
-            tags = new List<StringTag>(4);
         }
 
         public ImageSource Sample(int width)
