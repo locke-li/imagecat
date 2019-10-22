@@ -116,7 +116,7 @@ namespace liveitbe.ImageCat
         {
             string n = dir.Name;
             FileAttributes fa = dir.Attributes;
-            return (int)(fa & (FileAttributes.System | FileAttributes.Hidden)) != 0 || n.StartsWith(".");
+            return (int)(fa & (FileAttributes.System | FileAttributes.Hidden)) != 0 || n.StartsWith(".", StringComparison.Ordinal);
         }
 
         private void ClearFolderList()

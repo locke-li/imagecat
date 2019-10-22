@@ -11,7 +11,7 @@ namespace liveitbe.ImageCat
     {
         const string FilePath = "ImageCatConf";
         const string sep = ": ";
-        static Dictionary<string, string> confs = new Dictionary<string, string>(8);
+        static readonly Dictionary<string, string> confs = new Dictionary<string, string>(8);
 
         public static void Init()
         {
@@ -21,11 +21,11 @@ namespace liveitbe.ImageCat
                 while (!sr.EndOfStream)
                 {
                     string l = sr.ReadLine();
-                    int sepi = l.IndexOf(sep);
+                    int sepi = l.IndexOf(sep, StringComparison.Ordinal);
                     if (sepi < 0)
                         continue;
                     kv[0] = l.Substring(0, sepi);
-                    if (kv[0].StartsWith("#"))
+                    if (kv[0].StartsWith("#", StringComparison.Ordinal))
                         continue;
                     kv[1] = l.Substring(sepi + sep.Length);
                     if (confs.ContainsKey(kv[0]))
@@ -59,8 +59,7 @@ namespace liveitbe.ImageCat
 
         public static string Value(string k, string def = null)
         {
-            string ret;
-            if (!confs.TryGetValue(k, out ret))
+            if (!confs.TryGetValue(k, out var ret))
                 ret = def;
             return ret;
         }
