@@ -45,7 +45,7 @@ namespace liveitbe.ImageCat
             Console.WriteLine("tags:" + link.tags.Count);
             foreach(StringTag tag in link.tags)
             {
-                Label tagE = TagElement(tag);
+                var tagE = TagElement(tag);
                 xamlGridTags.Children.Add(tagE);
                 tagE.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
                 tagE.Arrange(new Rect(tagE.DesiredSize));
@@ -68,7 +68,7 @@ namespace liveitbe.ImageCat
 
         private Label TagElement(StringTag tag)
         {
-            Label ret = new Label() {
+            return new Label() {
                 Content = tag.ToString(),
                 FontSize = 12,
                 Foreground = Brushes.DarkGreen,
@@ -78,7 +78,6 @@ namespace liveitbe.ImageCat
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center
             };
-            return ret;
         }
 
         private void FilterTagsChanged(object sender, TextChangedEventArgs e)

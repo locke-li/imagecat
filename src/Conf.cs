@@ -15,37 +15,32 @@ namespace liveitbe.ImageCat
 
         public static void Init()
         {
-            using (StreamReader sr = new StreamReader(File.Open(FilePath, FileMode.OpenOrCreate)))
+            using var sr = new StreamReader(File.Open(FilePath, FileMode.OpenOrCreate));
+            var kv = new string[2];
+            while (!sr.EndOfStream)
             {
-                string[] kv = new string[2];
-                while (!sr.EndOfStream)
+                string l = sr.ReadLine();
+                int sepi = l.IndexOf(sep, StringComparison.Ordinal);
+                if (sepi < 0)
+                    continue;
+                kv[0] = l.Substring(0, sepi);
+                if (kv[0].StartsWith("#", StringComparison.Ordinal))
+                    continue;
+                kv[1] = l.Substring(sepi + sep.Length);
+                if (confs.ContainsKey(kv[0]))
                 {
-                    string l = sr.ReadLine();
-                    int sepi = l.IndexOf(sep, StringComparison.Ordinal);
-                    if (sepi < 0)
-                        continue;
-                    kv[0] = l.Substring(0, sepi);
-                    if (kv[0].StartsWith("#", StringComparison.Ordinal))
-                        continue;
-                    kv[1] = l.Substring(sepi + sep.Length);
-                    if (confs.ContainsKey(kv[0]))
-                    {
-                        confs[kv[0]] = kv[1];
-                        continue;
-                    }
-                    confs.Add(kv[0], kv[1]);
+                    confs[kv[0]] = kv[1];
+                    continue;
                 }
+                confs.Add(kv[0], kv[1]);
             }
         }
 
         public static void Save()
         {
-            using (StreamWriter sw = new StreamWriter(File.Open(FilePath, FileMode.OpenOrCreate)))
-            {
-                foreach (KeyValuePair<string, string> kv in confs)
-                {
-                    sw.WriteLine(kv.Key + ": " + kv.Value);
-                }
+            using StreamWriter sw = new StreamWriter(File.Open(FilePath, FileMode.OpenOrCreate));
+            foreach (var kv in confs) {
+                sw.WriteLine(kv.Key + ": " + kv.Value);
             }
         }
 

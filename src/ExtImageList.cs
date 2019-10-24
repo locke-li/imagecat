@@ -42,8 +42,8 @@ namespace liveitbe.ImageCat
             for (int r = 0; r < files.Count; ++r)
             {
                 xamlGridListImage.Dispatcher.Invoke(() => {
-                    ImageLink link = new ImageLink(files[r]);
-                    Image img = new Image() { Margin = new Thickness(10), Visibility = Visibility.Visible };
+                    var link = new ImageLink(files[r]);
+                    var img = new Image() { Margin = new Thickness(10), Visibility = Visibility.Visible };
                     img.Unloaded += (object sender, RoutedEventArgs e) =>
                     {
                         if (link.stream == null)
@@ -52,7 +52,7 @@ namespace liveitbe.ImageCat
                         link.stream.Dispose();
                     };
                     link.preview = img;
-                    Grid imgGrid = new Grid() { Margin = new Thickness(0), Visibility = Visibility.Collapsed };
+                    var imgGrid = new Grid() { Margin = new Thickness(0), Visibility = Visibility.Collapsed };
                     imgGrid.Children.Add(img);
                     imgGrid.MouseLeftButtonDown += (object sender, MouseButtonEventArgs e) =>
                     {
@@ -84,7 +84,7 @@ namespace liveitbe.ImageCat
         {
             xamlGridListImage.Dispatcher.Invoke(() =>
             {
-                Stopwatch sw = Stopwatch.StartNew();
+                var sw = Stopwatch.StartNew();
                 Grid imgGrid;
                 ImageLink link;
                 int tRow = Math.Max((int)Math.Ceiling((float)filteredLinks.Count / IMAGE_LIST_COL), 1);

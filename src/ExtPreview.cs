@@ -62,8 +62,8 @@ namespace liveitbe.ImageCat
         {
             if (!previewDrag)
                 return;
-            Point mousePosC = e.GetPosition(xamlViewImagePreview);
-            Vector diff = mousePosC - mousePos;
+            var mousePosC = e.GetPosition(xamlViewImagePreview);
+            var diff = mousePosC - mousePos;
             mousePos = mousePosC;
             xamlViewImagePreview.ScrollToHorizontalOffset(xamlViewImagePreview.HorizontalOffset - diff.X);
             xamlViewImagePreview.ScrollToVerticalOffset(xamlViewImagePreview.VerticalOffset - diff.Y);

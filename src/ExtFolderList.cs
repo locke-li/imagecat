@@ -30,16 +30,13 @@ namespace liveitbe.ImageCat
 
         private void OpenFolder(object sender, RoutedEventArgs e)
         {
-            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
-            {
-                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-                if (result == System.Windows.Forms.DialogResult.OK)
-                {
-                    topPath = dialog.SelectedPath;
-                    Conf.SetValue(LastAccessPath, topPath);
-                    Conf.Save();
-                    FillDirList();
-                }
+            using var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            var result = dialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK) {
+                topPath = dialog.SelectedPath;
+                Conf.SetValue(LastAccessPath, topPath);
+                Conf.Save();
+                FillDirList();
             }
         }
 
@@ -47,25 +44,25 @@ namespace liveitbe.ImageCat
         {
             if (topPath == null)
                 return;
-            DirectoryInfo topDir = new DirectoryInfo(topPath);
+            var topDir = new DirectoryInfo(topPath);
             if (!topDir.Exists)
                 return;
             FullClear();
-            Stack<ItemCollection> itemStack = new Stack<ItemCollection>(64);
+            var itemStack = new Stack<ItemCollection>(64);
             xamlListDir.Dispatcher.Invoke(() => {
                 xamlListDir.Items.Clear();
-                TreeViewItem topItem = new TreeViewItem() { Header = topDir.Name, Tag = topDir, IsExpanded = true };
+                var topItem = new TreeViewItem() { Header = topDir.Name, Tag = topDir, IsExpanded = true };
                 xamlListDir.Items.Add(topItem);
                 itemStack.Push(topItem.Items);
-                xamlListDir.SelectedItemChanged += (object sender, RoutedPropertyChangedEventArgs<Object> e) =>
+                xamlListDir.SelectedItemChanged += (sender, e) =>
                 {
-                    Stopwatch sw = Stopwatch.StartNew();
+                    var sw = Stopwatch.StartNew();
                     ClearPreview();
                     ClearFilter();
                     files.Clear();
                     if (e.NewValue != null)
                     {
-                        DirectoryInfo sdir = ((TreeViewItem)e.NewValue).Tag as DirectoryInfo;
+                        var sdir = (DirectoryInfo)((TreeViewItem)e.NewValue).Tag;
                         files.AddRange(sdir.GetFiles("*.jpg"));
                         files.AddRange(sdir.GetFiles("*.jpeg"));
                         files.AddRange(sdir.GetFiles("*.png"));
@@ -82,11 +79,11 @@ namespace liveitbe.ImageCat
             });
             Task.Run(() =>
             {
-                Stack<DirectoryInfo> dirStack = new Stack<DirectoryInfo>(64);
+                var dirStack = new Stack<DirectoryInfo>(64);
                 dirStack.Push(topDir);
                 IEnumerable<DirectoryInfo> dirs;
                 ItemCollection items;
-                Stopwatch sw = Stopwatch.StartNew();
+                var sw = Stopwatch.StartNew();
                 while (dirStack.Count > 0)
                 {
                     try
@@ -98,7 +95,7 @@ namespace liveitbe.ImageCat
                     {
                         continue;
                     }
-                    foreach (DirectoryInfo dir in dirs)
+                    foreach (var dir in dirs)
                     {
                         dirStack.Push(dir);
                         xamlListDir.Dispatcher.Invoke(() => {
@@ -112,16 +109,9 @@ namespace liveitbe.ImageCat
             });
         }
 
-        private bool ShouldIgnore(DirectoryInfo dir)
-        {
-            string n = dir.Name;
-            FileAttributes fa = dir.Attributes;
-            return (int)(fa & (FileAttributes.System | FileAttributes.Hidden)) != 0 || n.StartsWith(".", StringComparison.Ordinal);
-        }
+        private bool ShouldIgnore(DirectoryInfo dir) 
+            => (dir.Attributes & (FileAttributes.System | FileAttributes.Hidden)) != 0 || dir.Name.StartsWith(".", StringComparison.Ordinal);
 
-        private void ClearFolderList()
-        {
-            files.Clear();
-        }
+        private void ClearFolderList() => files.Clear();
     }
 }

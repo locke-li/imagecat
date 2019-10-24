@@ -37,14 +37,14 @@ namespace liveitbe.ImageCat
                 return;
             }
             name = file.Name.Substring(0, s0);
-            string tagSegment = file.Name.Substring(s0 + 1, s1 - s0 - 1).Replace(tagSepInFile, tagSepUI);
+            var tagSegment = file.Name.Substring(s0 + 1, s1 - s0 - 1).Replace(tagSepInFile, tagSepUI);
             RefreshTag(tagSegment, false);
             return;
         }
 
         public ImageSource Sample(int width)
         {
-            BitmapImage bi = new BitmapImage();
+            var bi = new BitmapImage();
             bi.BeginInit();
             stream.Seek(0, SeekOrigin.Begin);
             bi.StreamSource = stream;
@@ -58,7 +58,7 @@ namespace liveitbe.ImageCat
         {
             alltags = alltags_;
             tags.Clear();
-            string[] tagSegment = alltags.Split(tagSep, StringSplitOptions.RemoveEmptyEntries);
+            var tagSegment = alltags.Split(tagSep, StringSplitOptions.RemoveEmptyEntries);
             tags.AddRange(tagSegment.Select(s => StringTag.Ref(s)));
             if (rename)
                 RenameFile(name);
@@ -90,7 +90,7 @@ namespace liveitbe.ImageCat
 
         private void RenameFile(string n)
         {
-            StringBuilder sb = new StringBuilder(file.DirectoryName);
+            var sb = new StringBuilder(file.DirectoryName);
             sb.Append(Path.DirectorySeparatorChar).Append(n).Append(tagStartInFile);
             tags.ForEach(g => sb.Append(g).Append(tagSepInFile));
             --sb.Length;

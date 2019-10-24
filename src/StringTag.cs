@@ -6,8 +6,8 @@ namespace liveitbe.ImageCat
 {
     class StringTag
     {
-        static Dictionary<string, StringTag> refs = new Dictionary<string, StringTag>(64);
-        static List<StringTag> tagFilter = new List<StringTag>(16);
+        static readonly Dictionary<string, StringTag> refs = new Dictionary<string, StringTag>(64);
+        static readonly List<StringTag> tagFilter = new List<StringTag>(16);
 
         public static StringTag Ref(string name_) => Ref(name_, 1);
 
