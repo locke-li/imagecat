@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -44,7 +45,7 @@ namespace liveitbe.ImageCat
                 xamlGridListImage.Dispatcher.Invoke(() => {
                     var link = new ImageLink(files[r]);
                     var img = new Image() { Margin = new Thickness(10), Visibility = Visibility.Visible };
-                    img.Unloaded += (object sender, RoutedEventArgs e) =>
+                    img.Unloaded += (_, __) =>
                     {
                         if (link.stream == null)
                             return;
@@ -54,7 +55,7 @@ namespace liveitbe.ImageCat
                     link.preview = img;
                     var imgGrid = new Grid() { Margin = new Thickness(0), Visibility = Visibility.Collapsed };
                     imgGrid.Children.Add(img);
-                    imgGrid.MouseLeftButtonDown += (object sender, MouseButtonEventArgs e) =>
+                    imgGrid.MouseLeftButtonDown += (_, e) =>
                     {
                         e.Handled = true;
                         Preview(link);
@@ -75,9 +76,9 @@ namespace liveitbe.ImageCat
                     l.preview.Source = null;
                 });
             });
-            GC.Collect(0);
             filteredLinks.Clear();
             filteredLinks.AddRange(imageLinks.Where(l => !StringTag.ShouldFilter(l)));
+            GC.Collect(0);
         }
 
         private void RearrangeImageList()

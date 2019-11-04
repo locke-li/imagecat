@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 
 namespace liveitbe.ImageCat
 {
@@ -30,7 +31,7 @@ namespace liveitbe.ImageCat
 
         private void OpenFolder(object sender, RoutedEventArgs e)
         {
-            using var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            using var dialog = new FolderBrowserDialog();
             var result = dialog.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK) {
                 topPath = dialog.SelectedPath;
@@ -49,34 +50,20 @@ namespace liveitbe.ImageCat
                 return;
             FullClear();
             var itemStack = new Stack<ItemCollection>(64);
-            xamlListDir.Dispatcher.Invoke(() => {
-                xamlListDir.Items.Clear();
+            xamlListDir.Dispatcher.Invoke(() =>
+            {
                 var topItem = new TreeViewItem() { Header = topDir.Name, Tag = topDir, IsExpanded = true };
-                xamlListDir.Items.Add(topItem);
                 itemStack.Push(topItem.Items);
-                xamlListDir.SelectedItemChanged += (sender, e) =>
-                {
+                xamlListDir.Items.Clear();
+                xamlListDir.Items.Add(topItem);
+                xamlListDir.SelectedItemChanged += (_, e) => {
                     var sw = Stopwatch.StartNew();
-                    ClearPreview();
-                    ClearFilter();
-                    files.Clear();
-                    if (e.NewValue != null)
-                    {
-                        var sdir = (DirectoryInfo)((TreeViewItem)e.NewValue).Tag;
-                        files.AddRange(sdir.GetFiles("*.jpg"));
-                        files.AddRange(sdir.GetFiles("*.jpeg"));
-                        files.AddRange(sdir.GetFiles("*.png"));
-                        files.AddRange(sdir.GetFiles("*.bmp"));
-                        files.AddRange(sdir.GetFiles("*.tiff"));
-                        files.AddRange(sdir.GetFiles("*.gif"));
-                        files.OrderBy(f => f.Name);
-                    }
-                    FillImageList();
-                    FilterImages();
-                    RearrangeImageList();
+                    var dir = (DirectoryInfo)((TreeViewItem)e.NewValue).Tag;
+                    RefreshContent(dir);
                     Console.WriteLine("switch fill done: " + sw.ElapsedMilliseconds);
                 };
             });
+            //collect folder hierarchy
             Task.Run(() =>
             {
                 var dirStack = new Stack<DirectoryInfo>(64);
@@ -86,9 +73,9 @@ namespace liveitbe.ImageCat
                 var sw = Stopwatch.StartNew();
                 while (dirStack.Count > 0)
                 {
+                    items = itemStack.Pop();
                     try
                     {
-                        items = itemStack.Pop();
                         dirs = dirStack.Pop().EnumerateDirectories().Where(d => !ShouldIgnore(d)).OrderBy(d => d.Name);
                     }
                     catch (Exception)
@@ -99,7 +86,7 @@ namespace liveitbe.ImageCat
                     {
                         dirStack.Push(dir);
                         xamlListDir.Dispatcher.Invoke(() => {
-                            TreeViewItem item = new TreeViewItem() { Header = dir.Name, Tag = dir };
+                            var item = new TreeViewItem() { Header = dir.Name, Tag = dir };
                             items.Add(item);
                             itemStack.Push(item.Items);
                         });
@@ -109,7 +96,25 @@ namespace liveitbe.ImageCat
             });
         }
 
-        private bool ShouldIgnore(DirectoryInfo dir) 
+        private void RefreshContent(DirectoryInfo sdir)
+        {
+            ClearPreview();
+            ClearFilter();
+            files.Clear();
+            if (sdir == null) return;
+            files.AddRange(sdir.GetFiles("*.jpg"));
+            files.AddRange(sdir.GetFiles("*.jpeg"));
+            files.AddRange(sdir.GetFiles("*.png"));
+            files.AddRange(sdir.GetFiles("*.bmp"));
+            files.AddRange(sdir.GetFiles("*.tiff"));
+            files.AddRange(sdir.GetFiles("*.gif"));
+            files.OrderBy(f => f.Name);
+            FillImageList();
+            FilterImages();
+            RearrangeImageList();
+        }
+
+    private bool ShouldIgnore(DirectoryInfo dir) 
             => (dir.Attributes & (FileAttributes.System | FileAttributes.Hidden)) != 0 || dir.Name.StartsWith(".", StringComparison.Ordinal);
 
         private void ClearFolderList() => files.Clear();

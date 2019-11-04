@@ -2,3 +2,4 @@ ImageCatConf
 .vs/
 bin/
 obj/
+packages/

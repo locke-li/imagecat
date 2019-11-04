@@ -15,24 +15,19 @@ namespace liveitbe.ImageCat
 
         public static void Init()
         {
-            using var sr = new StreamReader(File.Open(FilePath, FileMode.OpenOrCreate));
-            var kv = new string[2];
-            while (!sr.EndOfStream)
+            using var reader = new StreamReader(File.Open(FilePath, FileMode.OpenOrCreate));
+            string k, v;
+            while (!reader.EndOfStream)
             {
-                string l = sr.ReadLine();
+                var l = reader.ReadLine();
+                if (l.StartsWith("#", StringComparison.Ordinal))
+                    continue;
                 int sepi = l.IndexOf(sep, StringComparison.Ordinal);
                 if (sepi < 0)
                     continue;
-                kv[0] = l.Substring(0, sepi);
-                if (kv[0].StartsWith("#", StringComparison.Ordinal))
-                    continue;
-                kv[1] = l.Substring(sepi + sep.Length);
-                if (confs.ContainsKey(kv[0]))
-                {
-                    confs[kv[0]] = kv[1];
-                    continue;
-                }
-                confs.Add(kv[0], kv[1]);
+                k = l.Substring(0, sepi);
+                v = l.Substring(sepi + sep.Length);
+                SetValue(k, v);
             }
         }
 
