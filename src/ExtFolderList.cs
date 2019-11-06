@@ -99,7 +99,7 @@ namespace liveitbe.ImageCat
         private void RefreshContent(DirectoryInfo sdir)
         {
             ClearPreview();
-            ClearFilter();
+            //ClearFilter();
             files.Clear();
             if (sdir == null) return;
             files.AddRange(sdir.GetFiles("*.jpg"));
