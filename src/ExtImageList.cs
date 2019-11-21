@@ -103,7 +103,7 @@ namespace liveitbe.ImageCat
                     int col = n % IMAGE_LIST_COL;
                     Grid.SetColumn(imgGrid, col);
                     Grid.SetRow(imgGrid, row);
-                    Console.WriteLine(link.name + "(" + col + "," + row + ")");
+                    //Console.WriteLine(link.name + "(" + col + "," + row + ")");
                 }
                 Console.WriteLine("rearrange done: " + sw.ElapsedMilliseconds);
             });

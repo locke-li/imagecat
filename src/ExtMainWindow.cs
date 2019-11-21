@@ -12,6 +12,7 @@ namespace liveitbe.ImageCat
             InitTagEdit();
             InitPreview();
             TryLoadPreviousPath();
+            TryRestoreLastSelectedPath();
         }
 
         private void FullClear()

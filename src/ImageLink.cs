@@ -50,6 +50,7 @@ namespace liveitbe.ImageCat
             bi.StreamSource = stream;
             bi.DecodePixelWidth = width;
             bi.EndInit();
+            //TODO force synchronous load, so we dont freeze the UI thread afterwards
             bi.Freeze();
             return bi;
         }

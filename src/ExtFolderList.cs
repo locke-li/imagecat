@@ -13,6 +13,7 @@ namespace liveitbe.ImageCat
     public partial class MainWindow : Window
     {
         const string LastAccessPath = "LastAccessPath0";
+        const string LastSelectedPath = "LastSelectedPath0";
         string topPath;
         List<FileInfo> files;
 
@@ -27,6 +28,14 @@ namespace liveitbe.ImageCat
             topPath = Conf.Value(LastAccessPath);
             Console.WriteLine(topPath);
             FillDirList();
+        }
+
+        private void TryRestoreLastSelectedPath() {
+            var lastSelected = Conf.Value(LastSelectedPath);
+            if (lastSelected is null) return;
+            var lastDir = new DirectoryInfo(lastSelected);
+            if (!lastDir.Exists) return;
+            RefreshContent(lastDir);
         }
 
         private void OpenFolder(object sender, RoutedEventArgs e)
@@ -84,7 +93,9 @@ namespace liveitbe.ImageCat
                     }
                     foreach (var dir in dirs)
                     {
-                        dirStack.Push(dir);
+                        //TODO only probe dir to a certain depth, from the nearest expanded list
+                        //now we only probe first level folder
+                        //dirStack.Push(dir);
                         xamlListDir.Dispatcher.Invoke(() => {
                             var item = new TreeViewItem() { Header = dir.Name, Tag = dir };
                             items.Add(item);
@@ -98,6 +109,9 @@ namespace liveitbe.ImageCat
 
         private void RefreshContent(DirectoryInfo sdir)
         {
+            Conf.SetValue(LastSelectedPath, sdir.FullName);
+            //TODO save on exit
+            Conf.Save();
             ClearPreview();
             //ClearFilter();
             files.Clear();
