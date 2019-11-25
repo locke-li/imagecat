@@ -38,6 +38,7 @@ namespace liveitbe.ImageCat
 
         private void FillImageList()
         {
+            //TODO image link cache
             imageLinks.Clear();
             xamlGridListImage.Dispatcher.Invoke(() => xamlGridListImage.Children.Clear());
             for (int r = 0; r < files.Count; ++r)
@@ -97,8 +98,7 @@ namespace liveitbe.ImageCat
                 {
                     link = filteredLinks[n];
                     imgGrid = link.grid;
-                    imgGrid.Visibility = Visibility.Visible;
-                    link.preview.Source = link.Sample(100);
+                    link.PreviewAsync(100);
                     int row = n / IMAGE_LIST_COL;
                     int col = n % IMAGE_LIST_COL;
                     Grid.SetColumn(imgGrid, col);

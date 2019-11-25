@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -42,17 +44,28 @@ namespace liveitbe.ImageCat
             return;
         }
 
-        public ImageSource Sample(int width)
-        {
+        public BitmapImage Sample(int width) {
             var bi = new BitmapImage();
             bi.BeginInit();
             stream.Seek(0, SeekOrigin.Begin);
             bi.StreamSource = stream;
+            //force synchronous load, so we dont freeze the UI thread afterwards, denoted by RenderTime in profiler
+            bi.CacheOption = BitmapCacheOption.OnLoad;
             bi.DecodePixelWidth = width;
             bi.EndInit();
-            //TODO force synchronous load, so we dont freeze the UI thread afterwards
             bi.Freeze();
+            //Console.WriteLine($"{name} {width} {sw.ElapsedMilliseconds}");
             return bi;
+        }
+
+        public async void PreviewAsync(int width) {
+            if (preview.Source != null) return;
+            //TODO reduce indirection
+            var bitmap = await Task.Run(() => Sample(width));
+            grid.Dispatcher.Invoke(() => {
+                grid.Visibility = Visibility.Visible;
+                preview.Source = bitmap;
+            });
         }
 
         public void RefreshTag(string alltags_, bool rename = true)
