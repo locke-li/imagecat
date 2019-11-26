@@ -20,7 +20,6 @@ namespace liveitbe.ImageCat
             ClearFilter();
             ClearPreview();
             ClearImageList();
-            ClearFolderList();
         }
     }
 }

@@ -80,10 +80,10 @@ namespace liveitbe.ImageCat
             if (previewLink != null)
                 previewLink.grid.Background = Brushes.Transparent;
             previewLink = link;
-            previewName = link.name;
+            previewName = link.Name;
             xamlTextFileName.Text = previewName;
             xamlTextFileName.IsEnabled = true;
-            xamlTextFileTags.Text = link.alltags;
+            xamlTextFileTags.Text = link.AllTag;
             xamlTextFileTags.IsEnabled = true;
             xamlImagePreview.Source = previewLink.Sample(0);
             previewLink.grid.Background = Brushes.LightSkyBlue;
@@ -95,7 +95,7 @@ namespace liveitbe.ImageCat
             try
             {
                 previewLink.Rename(xamlTextFileName.Text);
-                previewName = previewLink.name;
+                previewName = previewLink.Name;
             }
             catch (Exception)
             {

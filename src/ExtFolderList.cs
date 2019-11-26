@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,19 +15,26 @@ namespace liveitbe.ImageCat
     {
         const string LastAccessPath = "LastAccessPath0";
         const string LastSelectedPath = "LastSelectedPath0";
-        string topPath;
-        List<FileInfo> files;
+        string _topPath;
+        string[] _fileFilter;
 
         private void InitFolderList()
         {
-            files = new List<FileInfo>(128);
+            _fileFilter = new string[] {
+               "*.jpg",
+                "*.jpeg",
+                "*.png",
+                "*.bmp",
+                "*.tiff",
+                "*.gif",
+            };
             xamlButtonSelectFolder.Click += OpenFolder;
         }
 
         private void TryLoadPreviousPath()
         {
-            topPath = Conf.Value(LastAccessPath);
-            Console.WriteLine(topPath);
+            _topPath = Conf.Value(LastAccessPath);
+            Console.WriteLine(_topPath);
             FillDirList();
         }
 
@@ -43,8 +51,8 @@ namespace liveitbe.ImageCat
             using var dialog = new FolderBrowserDialog();
             var result = dialog.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK) {
-                topPath = dialog.SelectedPath;
-                Conf.SetValue(LastAccessPath, topPath);
+                _topPath = dialog.SelectedPath;
+                Conf.SetValue(LastAccessPath, _topPath);
                 Conf.Save();
                 FillDirList();
             }
@@ -52,9 +60,9 @@ namespace liveitbe.ImageCat
 
         private void FillDirList()
         {
-            if (topPath == null)
+            if (_topPath == null)
                 return;
-            var topDir = new DirectoryInfo(topPath);
+            var topDir = new DirectoryInfo(_topPath);
             if (!topDir.Exists)
                 return;
             FullClear();
@@ -107,30 +115,29 @@ namespace liveitbe.ImageCat
             });
         }
 
+#nullable enable
+
         private void RefreshContent(DirectoryInfo sdir)
         {
+            _cancelPreview?.Cancel();
+            Console.WriteLine("Cancel");
             Conf.SetValue(LastSelectedPath, sdir.FullName);
             //TODO save on exit
             Conf.Save();
             ClearPreview();
             //ClearFilter();
-            files.Clear();
-            if (sdir == null) return;
-            files.AddRange(sdir.GetFiles("*.jpg"));
-            files.AddRange(sdir.GetFiles("*.jpeg"));
-            files.AddRange(sdir.GetFiles("*.png"));
-            files.AddRange(sdir.GetFiles("*.bmp"));
-            files.AddRange(sdir.GetFiles("*.tiff"));
-            files.AddRange(sdir.GetFiles("*.gif"));
-            files.OrderBy(f => f.Name);
-            FillImageList();
+            var files = _fileFilter
+                .SelectMany(f => sdir.EnumerateFiles(f))
+                .OrderBy(f => f.Name);
+            FillImageList(files);
             FilterImages();
             RearrangeImageList();
+            //TODO watch for changes of the selected dir
         }
 
-    private bool ShouldIgnore(DirectoryInfo dir) 
-            => (dir.Attributes & (FileAttributes.System | FileAttributes.Hidden)) != 0 || dir.Name.StartsWith(".", StringComparison.Ordinal);
+#nullable disable
 
-        private void ClearFolderList() => files.Clear();
+        private bool ShouldIgnore(DirectoryInfo dir) 
+            => (dir.Attributes & (FileAttributes.System | FileAttributes.Hidden)) != 0 || dir.Name.StartsWith(".", StringComparison.Ordinal);
     }
 }

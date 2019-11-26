@@ -42,8 +42,8 @@ namespace liveitbe.ImageCat
             double x = 0, lx = 0;
             double xm = xamlGridTags.ActualWidth;
             int row = 0;
-            Console.WriteLine("tags:" + link.tags.Count);
-            foreach(StringTag tag in link.tags)
+            Console.WriteLine("tags:" + link.tag.Count);
+            foreach(StringTag tag in link.tag)
             {
                 var tagE = TagElement(tag);
                 xamlGridTags.Children.Add(tagE);
