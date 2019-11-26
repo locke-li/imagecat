@@ -12,6 +12,9 @@ using System.Windows.Input;
 namespace liveitbe.ImageCat {
     public partial class MainWindow : Window {
         private const int IMAGE_LIST_COL = 5;
+        private const int PREVIEW_GRID_IMAGE_SIZE= 100;
+        private const int PREVIEW_GRID_IMAGE_MARGIN = 10;
+        private const int PREVIEW_GRID_HEIGHT = PREVIEW_GRID_IMAGE_SIZE + PREVIEW_GRID_IMAGE_MARGIN * 2;
 
         List<ImageLink> imageLinks;
         List<ImageLink> filteredLinks;
@@ -40,7 +43,7 @@ namespace liveitbe.ImageCat {
             imageLinks.Clear();
             foreach (var file in files) {
                 var link = ImageLink.Create(file);
-                var img = new Image() { Margin = new Thickness(10), Visibility = Visibility.Visible };
+                var img = new Image() { Margin = new Thickness(PREVIEW_GRID_IMAGE_MARGIN), Visibility = Visibility.Visible };
                 var imgGrid = new Grid() { Margin = new Thickness(0), Visibility = Visibility.Collapsed };
                 imgGrid.Children.Add(img);
                 imgGrid.MouseLeftButtonDown += (_, e) => {
@@ -80,7 +83,7 @@ namespace liveitbe.ImageCat {
                 Console.WriteLine(filteredLinks.Count + ", " + tRow);
                 ImageListRowSetup(tRow);
                 xamlListImage.ScrollToTop();
-                xamlGridListImage.Height = tRow * 120;
+                xamlGridListImage.Height = tRow * PREVIEW_GRID_HEIGHT;
                 for (int n = 0; n < filteredLinks.Count; ++n) {
                     link = filteredLinks[n];
                     imgGrid = link.grid;
@@ -97,7 +100,7 @@ namespace liveitbe.ImageCat {
             Task.Run(() => {
                 var sw = Stopwatch.StartNew();
                 foreach (var link in filteredLinks) {
-                    link.PreviewAsync(100);
+                    link.PreviewAsync(PREVIEW_GRID_IMAGE_SIZE);
                     if (cancel.IsCancellationRequested) {
                         Console.WriteLine("cancelled");
                         return;

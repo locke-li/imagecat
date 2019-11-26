@@ -11,11 +11,14 @@ using System.Windows.Media.Imaging;
 
 namespace liveitbe.ImageCat {
     class ImageLink {
-        public static char[] tagSep = new char[] { tagSepUI, tagSepInFile };
         private const char tagSepInFile = '_';
         private const char tagSepUI = ';';
         private const char tagStartInFile = '@';
         private const char tagEndInFile = '.';
+
+        #region static
+
+        public static char[] tagSep = new char[] { tagSepUI, tagSepInFile };
 
         private static Stack<ImageLink> _pool;
 
@@ -35,6 +38,8 @@ namespace liveitbe.ImageCat {
                 _pool.Push(r);
             }
         }
+
+        #endregion
 
         private FileInfo file;
         private FileStream stream;

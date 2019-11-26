@@ -13,8 +13,8 @@ namespace liveitbe.ImageCat
 {
     public partial class MainWindow : Window
     {
-        const string LastAccessPath = "LastAccessPath0";
-        const string LastSelectedPath = "LastSelectedPath0";
+        const string LAST_ACCESS_PATH = "LastAccessPath0";
+        const string LAST_SELECTED_PATH = "LastSelectedPath0";
         string _topPath;
         string[] _fileFilter;
 
@@ -33,13 +33,13 @@ namespace liveitbe.ImageCat
 
         private void TryLoadPreviousPath()
         {
-            _topPath = Conf.Value(LastAccessPath);
+            _topPath = Conf.Value(LAST_ACCESS_PATH);
             Console.WriteLine(_topPath);
             FillDirList();
         }
 
         private void TryRestoreLastSelectedPath() {
-            var lastSelected = Conf.Value(LastSelectedPath);
+            var lastSelected = Conf.Value(LAST_SELECTED_PATH);
             if (lastSelected is null) return;
             var lastDir = new DirectoryInfo(lastSelected);
             if (!lastDir.Exists) return;
@@ -52,7 +52,7 @@ namespace liveitbe.ImageCat
             var result = dialog.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK) {
                 _topPath = dialog.SelectedPath;
-                Conf.SetValue(LastAccessPath, _topPath);
+                Conf.SetValue(LAST_ACCESS_PATH, _topPath);
                 Conf.Save();
                 FillDirList();
             }
@@ -120,8 +120,8 @@ namespace liveitbe.ImageCat
         private void RefreshContent(DirectoryInfo sdir)
         {
             _cancelPreview?.Cancel();
-            Console.WriteLine("Cancel");
-            Conf.SetValue(LastSelectedPath, sdir.FullName);
+            Console.WriteLine(nameof(_cancelPreview));
+            Conf.SetValue(LAST_SELECTED_PATH, sdir.FullName);
             //TODO save on exit
             Conf.Save();
             ClearPreview();

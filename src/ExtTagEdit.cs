@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
-namespace liveitbe.ImageCat
-{
+namespace liveitbe.ImageCat {
     public partial class MainWindow : Window
     {
         private const int TAG_ROW_HEIGHT = 28;
-        static char[] filterSep = new char[] { ';' };
+        private static readonly char[] _filterSep = new char[] { ';' };
         bool tagVisible;
 
         private void InitTagEdit()
@@ -82,7 +75,7 @@ namespace liveitbe.ImageCat
 
         private void FilterTagsChanged(object sender, TextChangedEventArgs e)
         {
-            StringTag.FilterTags(xamlTextTagsFilter.Text.Split(filterSep, StringSplitOptions.RemoveEmptyEntries));
+            StringTag.FilterTags(xamlTextTagsFilter.Text.Split(_filterSep, StringSplitOptions.RemoveEmptyEntries));
             FilterImages();
             RearrangeImageList();
         }

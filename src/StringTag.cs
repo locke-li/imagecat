@@ -6,6 +6,8 @@ namespace liveitbe.ImageCat
 {
     class StringTag
     {
+        #region static
+
         static readonly Dictionary<string, StringTag> refs = new Dictionary<string, StringTag>(64);
         static readonly List<StringTag> tagFilter = new List<StringTag>(16);
 
@@ -26,7 +28,10 @@ namespace liveitbe.ImageCat
                 tagFilter.AddRange(tagStrs.Select(s => Ref(s, 0)));
         }
 
-        public static bool ShouldFilter(ImageLink link) => tagFilter.Count > 0 && tagFilter.Any(f => link.tag.All(l => !l.name.StartsWith(f.name, StringComparison.Ordinal)));
+        public static bool ShouldFilter(ImageLink link) =>
+            tagFilter.Count > 0 && tagFilter.Any(f => link.tag.All(l => !l.name.StartsWith(f.name, StringComparison.Ordinal)));
+
+        #endregion
 
         public string name;
         public int count;
