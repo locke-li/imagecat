@@ -1,30 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace liveitbe.ImageCat
-{
+namespace liveitbe.ImageCat {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
-    {
-        public MainWindow()
-        {
+    public partial class MainWindow : Window {
+        public FolderList FolderList { get; private set; }
+        public ImageList ImageList { get; private set; }
+        public TagEdit TagEdit { get; private set; }
+        public ImageViewer ImageViewer { get; private set; }
+
+        public MainWindow() {
             InitializeComponent();
             Init();
+        }
+
+        private void Init() {
+            Conf.Init();
+            FolderList = new FolderList().Init(this);
+            ImageList = new ImageList().Init(this);
+            TagEdit = new TagEdit().Init(this);
+            ImageViewer = new ImageViewer().Init(this);
+            FolderList.TryResumeLastSession();
+        }
+
+        internal void Clear() {
+            TagEdit.Clear();
+            ImageViewer.Clear();
+            ImageList.Clear();
         }
     }
 }

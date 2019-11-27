@@ -80,10 +80,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="src\Conf.cs" />
-    <Compile Include="src\ExtPreview.cs" />
-    <Compile Include="src\ExtImageList.cs" />
-    <Compile Include="src\ExtFolderList.cs" />
-    <Compile Include="src\ExtTagEdit.cs" />
+    <Compile Include="src\ImageViewer.cs" />
+    <Compile Include="src\ImageList.cs" />
+    <Compile Include="src\FolderList.cs" />
+    <Compile Include="src\TagEdit.cs" />
     <Compile Include="src\StringTag.cs" />
     <Compile Include="src\StringTagElement.cs" />
     <Page Include="MainWindow.xaml">
@@ -101,7 +101,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\ExtMainWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
