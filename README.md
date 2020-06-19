@@ -1,3 +1,7 @@
 # ImageCat
 
-Image collection categorizer
+Image Categorizer
+
++ Preview
++ Tag image
++ Search by tag
